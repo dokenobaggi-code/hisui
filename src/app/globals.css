@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ライト: 白 × エメラルドグリーン × 淡いブルー基調 */
+    --background: 190 40% 98%;
+    --foreground: 165 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 165 30% 15%;
+
+    --primary: 160 48% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 195 55% 92%;
+    --secondary-foreground: 165 35% 20%;
+
+    --muted: 190 30% 94%;
+    --muted-foreground: 190 12% 42%;
+
+    --accent: 160 45% 90%;
+    --accent-foreground: 163 45% 22%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 190 25% 88%;
+    --input: 190 25% 88%;
+    --ring: 160 48% 42%;
+
+    --radius: 0.9rem;
+  }
+
+  .dark {
+    /* ダーク: 深い翡翠グリーン基調 */
+    --background: 170 30% 8%;
+    --foreground: 160 25% 92%;
+
+    --card: 170 28% 12%;
+    --card-foreground: 160 25% 92%;
+
+    --primary: 160 46% 52%;
+    --primary-foreground: 170 40% 10%;
+
+    --secondary: 190 25% 18%;
+    --secondary-foreground: 160 25% 90%;
+
+    --muted: 175 20% 18%;
+    --muted-foreground: 175 12% 62%;
+
+    --accent: 165 30% 20%;
+    --accent-foreground: 160 30% 90%;
+
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 175 18% 22%;
+    --input: 175 18% 22%;
+    --ring: 160 46% 52%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
+}
+
+/* ヒスイ海岸グラデーション背景 */
+.hisui-gradient {
+  background:
+    radial-gradient(circle at 15% 20%, hsl(195 60% 90% / 0.6), transparent 45%),
+    radial-gradient(circle at 85% 10%, hsl(160 55% 88% / 0.55), transparent 40%);
+}
+.dark .hisui-gradient {
+  background:
+    radial-gradient(circle at 15% 20%, hsl(190 40% 30% / 0.25), transparent 45%),
+    radial-gradient(circle at 85% 10%, hsl(160 45% 35% / 0.22), transparent 40%);
+}
