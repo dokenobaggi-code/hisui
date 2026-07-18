@@ -22,8 +22,8 @@ export default async function HomePage() {
       <section className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1">
           <h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl">
-            <Waves className="h-7 w-7 text-primary" />
-            今日のヒスイ拾い予報
+            <Waves className="h-7 w-7 shrink-0 animate-[bounce_3s_ease-in-out_infinite] text-primary" />
+            <span className="jade-text">今日のヒスイ拾い予報</span>
           </h1>
           <p className="text-sm text-muted-foreground">{location.name}</p>
         </div>

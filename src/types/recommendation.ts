@@ -7,7 +7,13 @@
  */
 
 /** 評価対象の項目キー。項目を増やす場合はここに追加する。 */
-export type FactorKey = "wave" | "wind" | "weather" | "tide" | "temperature";
+export type FactorKey =
+  | "wave"
+  | "wind"
+  | "weather"
+  | "tide"
+  | "temperature"
+  | "previousDay";
 
 /** 各項目の4段階評価。 */
 export type Grade = "◎" | "○" | "△" | "×";

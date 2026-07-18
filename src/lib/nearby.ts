@@ -214,6 +214,35 @@ export const ACCOMMODATIONS: readonly NearbySpot[] = [
 /** 飲食店。1軒ずつ掲載し、それぞれ食べログとGoogleのリンクを持たせる。 */
 export const RESTAURANTS: readonly NearbySpot[] = [
   {
+    id: "kyoukae",
+    name: "今日もかえりたい。～Melon et Cafe～",
+    category: "eat",
+    description:
+      "ヒスイテラス2階の絶景カフェ。海側は一面ガラス張りで、日本海の水平線を眺めながら休憩できます。植物工場で育てた完熟メロンを使ったスイーツとドリンクが看板で、赤肉メロンのゼリーと青肉メロンのフラッペを重ねた「ヒスイメロンフラッペ」が人気です。ヒスイ拾いの休憩に最適な立地です。",
+    tags: ["絶景カフェ", "メロンスイーツ", "ヒスイテラス2F", "海が一望"],
+    access: {
+      fromCoast: "ヒスイ海岸すぐ目の前（ヒスイテラス2階）",
+      transitAvailable: true,
+      transit: "あいの風とやま鉄道「越中宮崎駅」が最寄りです。ヒスイテラス内にあります。",
+      car: "ヒスイテラスの駐車場を利用できます",
+    },
+    links: [
+      { kind: "official", label: "公式サイト", url: "https://kyoukae.com/" },
+      {
+        kind: "info",
+        label: "Instagram",
+        url: "https://www.instagram.com/kyoukae_cafe/",
+      },
+      {
+        kind: "tabelog",
+        label: "食べログで探す",
+        url: "https://tabelog.com/rstLst/?vs=1&sk=%E4%BB%8A%E6%97%A5%E3%82%82%E3%81%8B%E3%81%88%E3%82%8A%E3%81%9F%E3%81%84%20%E6%9C%9D%E6%97%A5%E7%94%BA",
+      },
+      googleLink("今日もかえりたい Melon et Cafe ヒスイテラス 朝日町"),
+    ],
+    isBeachfront: true,
+  },
+  {
     id: "sakae",
     name: "栄食堂",
     category: "eat",
@@ -371,5 +400,31 @@ export const INFO_SPOTS: readonly NearbySpot[] = [
     },
     links: [googleLink("ヒスイテラス 富山県朝日町")],
     isBeachfront: true,
+  },
+  {
+    id: "fossa-magna-museum",
+    name: "フォッサマグナミュージアム（石の鑑定）",
+    category: "info",
+    description:
+      "新潟県糸魚川市にあるヒスイと大地の博物館。拾った石の名前を学芸員が無料で教えてくれる「石の鑑定」を実施しています。鑑定には当日9:00から配布される鑑定券が必要で、希望者が多い場合は抽選です（1枚で1グループ4名程度・1日1回）。鑑定日は主に土日ですが月ごとに変わるため、必ず公式カレンダーで確認してください。長さ15cm以上の石、濡れた石・汚れた石、加工・研磨された石は鑑定対象外で、1人5個までです。",
+    tags: ["ヒスイ鑑定", "無料", "鑑定券は抽選", "新潟県糸魚川市"],
+    access: {
+      fromCoast: "ヒスイ海岸から県境を越えた新潟県糸魚川市（車で約30分）",
+      transitAvailable: true,
+      transit:
+        "電車で「糸魚川駅」まで行き、そこから路線バス「美山公園・博物館線」で約10分、またはタクシーで約10分。バスは本数が限られるため事前に時刻表の確認をおすすめします。",
+      car: "北陸自動車道「糸魚川IC」から車で約10分",
+    },
+    links: [
+      {
+        kind: "official",
+        label: "石の鑑定カレンダーを見る",
+        url: "https://fmm.geo-itoigawa.com/info/appraisal/",
+      },
+      { kind: "official", label: "公式サイト", url: "https://fmm.geo-itoigawa.com/" },
+      { kind: "info", label: "アクセス詳細", url: "https://fmm.geo-itoigawa.com/info/access/" },
+      googleLink("フォッサマグナミュージアム 糸魚川"),
+    ],
+    isBeachfront: false,
   },
 ];

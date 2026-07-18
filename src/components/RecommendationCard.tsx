@@ -26,12 +26,12 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
   const isDanger = safety.level === "danger";
 
   return (
-    <Card className="overflow-hidden border-primary/20">
-      <div className="hisui-gradient">
+    <Card className="overflow-hidden border-primary/25">
+      <div className="jade-shimmer">
         <CardHeader className="flex flex-row items-start justify-between gap-3 pb-3">
           <div className="space-y-0.5">
-            <CardTitle className="text-base">今日行くべき？</CardTitle>
-            <p className="text-xs text-muted-foreground">ヒスイ拾いのおすすめ度</p>
+            <CardTitle className="jade-text text-xl font-bold">今日、行くべき？</CardTitle>
+            <p className="text-xs text-muted-foreground">波・風・前日の海況からヒスイ拾い日和を判定</p>
           </div>
 
           <button

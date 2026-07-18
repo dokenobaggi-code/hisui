@@ -85,3 +85,62 @@
     radial-gradient(circle at 15% 20%, hsl(190 40% 30% / 0.25), transparent 45%),
     radial-gradient(circle at 85% 10%, hsl(160 45% 35% / 0.22), transparent 40%);
 }
+
+/* ヒスイの内部で光がゆらぐようなグラデーション。主役カードの背景に使う。 */
+.jade-shimmer {
+  background:
+    radial-gradient(ellipse at 20% 0%, hsl(160 70% 85% / 0.55), transparent 55%),
+    radial-gradient(ellipse at 85% 15%, hsl(195 75% 88% / 0.5), transparent 50%),
+    radial-gradient(ellipse at 60% 100%, hsl(150 60% 88% / 0.45), transparent 55%);
+  background-size: 200% 200%;
+  animation: jade-drift 18s ease-in-out infinite;
+}
+.dark .jade-shimmer {
+  background:
+    radial-gradient(ellipse at 20% 0%, hsl(160 55% 30% / 0.35), transparent 55%),
+    radial-gradient(ellipse at 85% 15%, hsl(195 55% 32% / 0.3), transparent 50%),
+    radial-gradient(ellipse at 60% 100%, hsl(150 50% 28% / 0.3), transparent 55%);
+  background-size: 200% 200%;
+  animation: jade-drift 18s ease-in-out infinite;
+}
+
+@keyframes jade-drift {
+  0%,
+  100% {
+    background-position:
+      0% 0%,
+      100% 0%,
+      50% 100%;
+  }
+  50% {
+    background-position:
+      20% 20%,
+      80% 30%,
+      40% 70%;
+  }
+}
+
+/* 動きを減らす設定の人にはアニメーションを止める */
+@media (prefers-reduced-motion: reduce) {
+  .jade-shimmer {
+    animation: none;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 見出しをヒスイ色のグラデーションで塗る */
+.jade-text {
+  background: linear-gradient(100deg, hsl(165 55% 34%), hsl(190 60% 45%), hsl(155 50% 40%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.dark .jade-text {
+  background: linear-gradient(100deg, hsl(160 55% 62%), hsl(190 60% 68%), hsl(150 50% 60%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

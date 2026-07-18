@@ -32,16 +32,19 @@ import type { WaveInfo, WeatherInfo } from "@/types";
  */
 export const DANGER_WAVE_HEIGHT = 1.5;
 
-/** 前日が荒れていた場合の加点（満点100に対して）。 */
-export const PREVIOUS_DAY_BONUS_POINTS = 10;
-
-/** 各項目の重み（合計100）。バランス調整はここだけ触ればよい。 */
+/**
+ * 各項目の重み（合計100）。バランス調整はここだけ触ればよい。
+ *
+ * 「前日の海況」は、荒れた翌日にヒスイが打ち上げられやすいという
+ * 経験則にもとづく重要な指標のため、風と同等の重みを置いている。
+ */
 export const FACTOR_WEIGHTS = {
-  wave: 30,
-  wind: 25,
-  weather: 20,
-  tide: 15,
-  temperature: 10,
+  wave: 25,
+  wind: 20,
+  previousDay: 20,
+  weather: 15,
+  tide: 12,
+  temperature: 8,
 } as const;
 
 /** 素点が取得できない場合に用いる中立点。 */
@@ -114,6 +117,21 @@ function scoreTide(seaLevel: number | null): number {
   if (seaLevel <= 0.1) return 65;
   if (seaLevel <= 0.25) return 45;
   return 25;
+}
+
+/**
+ * 前日の海況の採点。
+ * 荒天時の高波が海底のヒスイを浜へ打ち上げるため、
+ * 「前日が荒れていた」ほど当日は拾いやすいとみなす。
+ */
+function scorePreviousDay(previousDay: PreviousDayInfo | undefined): number {
+  if (!previousDay || previousDay.maxWaveHeight === null) return NEUTRAL_SCORE;
+  if (previousDay.wasRough) return 100;
+
+  const maxWave = previousDay.maxWaveHeight;
+  if (maxWave >= 0.8) return 75;
+  if (maxWave >= 0.5) return 55;
+  return 40;
 }
 
 /** 気温の採点。長時間浜を歩くため、極端な暑さ・寒さを減点する。 */
@@ -197,7 +215,7 @@ function tideTrendJa(trend: TideInfo["trend"]): string {
 // ---------- 項目別評価の組み立て ----------
 
 function buildFactors(input: EvaluateInput): WeatherEvaluation[] {
-  const { wave, weather, tide } = input;
+  const { wave, weather, tide, previousDay } = input;
   const seaLevel = tide?.seaLevel ?? null;
 
   const waveScore = scoreWave(wave.waveHeight);
@@ -205,8 +223,23 @@ function buildFactors(input: EvaluateInput): WeatherEvaluation[] {
   const weatherScore = scoreWeather(weather.weatherCode, weather.rainProbability);
   const tideScore = scoreTide(seaLevel);
   const tempScore = scoreTemperature(weather.temperature);
+  const prevScore = scorePreviousDay(previousDay);
 
   return [
+    {
+      key: "previousDay",
+      label: "前日",
+      grade: toGrade(prevScore),
+      score: prevScore,
+      weight: FACTOR_WEIGHTS.previousDay,
+      value:
+        previousDay?.maxWaveHeight != null
+          ? `${previousDay.maxWaveHeight.toFixed(1)} m`
+          : "—",
+      detail:
+        previousDay?.description ??
+        "前日のデータを取得できませんでした。中立として評価しています。",
+    },
     {
       key: "wave",
       label: "波",
@@ -397,22 +430,17 @@ export function evaluateRecommendation(
   const weighted = factors.reduce((sum, f) => sum + f.score * f.weight, 0);
   const baseScore = totalWeight === 0 ? 0 : weighted / totalWeight;
 
-  // 前日が荒れていた場合、当日が安全な範囲であれば加点する。
+  // 前日の海況は factors 側で加点済みのため、ここでは強調表示の判定だけ行う。
   const previousDay = input.previousDay;
   const bonusApplies =
     previousDay?.wasRough === true && safety.level !== "danger" && input.wave.waveHeight < 1.2;
 
-  const bonusPoints = bonusApplies ? PREVIOUS_DAY_BONUS_POINTS : 0;
-
   // 危険時はスコアを最低ランク（★1帯）へ強制する。
-  const finalValue = safety.level === "danger" ? Math.min(baseScore, 20) : baseScore + bonusPoints;
+  const finalValue = safety.level === "danger" ? Math.min(baseScore, 20) : baseScore;
 
   const score = toRecommendationScore(finalValue);
 
   const highlights = factors.map((f) => f.detail);
-  if (previousDay && previousDay.description !== "") {
-    highlights.push(previousDay.description);
-  }
 
   const comment = buildFinalComment({
     score,
@@ -430,9 +458,9 @@ export function evaluateRecommendation(
     previousDayBonus: previousDay
       ? {
           applied: bonusApplies,
-          points: bonusPoints,
+          points: FACTOR_WEIGHTS.previousDay,
           message: bonusApplies
-            ? `前日が荒れていたため +${bonusPoints}点。新しいヒスイが打ち上がっている可能性があります。`
+            ? `${previousDay.description}波が落ち着いた今日は狙い目です。`
             : previousDay.description,
         }
       : null,
