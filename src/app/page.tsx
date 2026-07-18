@@ -1,5 +1,5 @@
 import { Waves } from "lucide-react";
-import { ScoreCard } from "@/components/ScoreCard";
+import { RecommendationCard } from "@/components/RecommendationCard";
 import { WaveCard } from "@/components/WaveCard";
 import { WeatherCard } from "@/components/WeatherCard";
 import { ScoreChart } from "@/components/ScoreChart";
@@ -14,7 +14,7 @@ import { location } from "@/lib/config";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const { record, trend, source } = await getHomeData();
+  const { record, trend, source, recommendation } = await getHomeData();
   const tip = getTipOfDay(record.date);
 
   return (
@@ -30,7 +30,8 @@ export default async function HomePage() {
         <RefreshButton />
       </section>
 
-      <ScoreCard score={record.judgement.score} reason={record.judgement.reason} />
+      {/* 一目で判断できるよう、総合判定を最上部に配置する */}
+      <RecommendationCard recommendation={recommendation} />
 
       <div className="grid gap-6 sm:grid-cols-2">
         <WaveCard wave={record.wave} />
