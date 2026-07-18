@@ -40,7 +40,13 @@ async function getTitlePropName(): Promise<string> {
   return cachedTitleProp;
 }
 
-/** 1日分のレコードを Notion に保存する。 */
+/**
+ * 1日分のレコードを Notion に保存する（upsert）。
+ *
+ * 同じ日付の行が既にあれば新規作成せず更新する。
+ * Cronの再実行や手動更新で同日の行が重複すると、
+ * 「直近7日」のグラフが実際には数日分しか表示されなくなるため。
+ */
 export async function saveDailyRecord(record: DailyRecord): Promise<void> {
   const client = getClient();
   const titleProp = await getTitlePropName();
@@ -77,10 +83,37 @@ export async function saveDailyRecord(record: DailyRecord): Promise<void> {
     },
   };
 
+  const existingPageId = await findPageIdByDate(record.date);
+
+  if (existingPageId) {
+    await client.pages.update({ page_id: existingPageId, properties });
+    return;
+  }
+
   await client.pages.create({
     parent: { database_id: notionConfig.databaseId },
     properties,
   });
+}
+
+/** 指定日付の行を探す。無ければ null。 */
+async function findPageIdByDate(date: string): Promise<string | null> {
+  try {
+    const res = await getClient().databases.query({
+      database_id: notionConfig.databaseId,
+      filter: {
+        property: NOTION_PROPS.Date,
+        date: { equals: date },
+      },
+      page_size: 1,
+    });
+    const page = res.results.find(isFullPage);
+    return page ? page.id : null;
+  } catch (error) {
+    // 検索に失敗した場合は新規作成にフォールバックする（保存を落とさない）
+    console.error("[notion] 既存行の検索に失敗しました:", error);
+    return null;
+  }
 }
 
 /** 直近の保存レコードを DailyRecord として取得。無ければ null。 */
