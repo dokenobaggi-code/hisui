@@ -1,7 +1,7 @@
-import { Waves } from "lucide-react";
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { WaveCard } from "@/components/WaveCard";
 import { WeatherCard } from "@/components/WeatherCard";
+import { WeeklyForecast } from "@/components/WeeklyForecast";
 import { ScoreChart } from "@/components/ScoreChart";
 import { TipCard } from "@/components/TipCard";
 import { RefreshButton } from "@/components/RefreshButton";
@@ -14,36 +14,48 @@ import { location } from "@/lib/config";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const { record, trend, source, recommendation } = await getHomeData();
+  const { record, trend, source, recommendation, weekly } = await getHomeData();
   const tip = getTipOfDay(record.date);
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <section className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1">
-          <h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl">
-            <Waves className="h-7 w-7 shrink-0 animate-[bounce_3s_ease-in-out_infinite] text-primary" />
-            <span className="jade-text">今日のヒスイ拾い予報</span>
-          </h1>
-          <p className="text-sm text-muted-foreground">{location.name}</p>
+    <div className="mx-auto max-w-3xl space-y-12">
+      {/* 表題 */}
+      <section className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-1.5">
+          <span className="label-en">Hisui Beach · Toyama</span>
+          <h1 className="jade-text text-3xl font-bold sm:text-4xl">ヒスイ拾い予報</h1>
+          <p className="text-xs tracking-wider text-muted-foreground">{location.name}</p>
         </div>
         <RefreshButton />
       </section>
 
-      {/* 一目で判断できるよう、総合判定を最上部に配置する */}
       <RecommendationCard recommendation={recommendation} />
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <WaveCard wave={record.wave} />
-        <WeatherCard weather={record.weather} />
-      </div>
+      <section className="space-y-5">
+        <div className="rule-left space-y-1">
+          <span className="label-en">Conditions</span>
+          <h2 className="text-lg font-bold">今日の海と空</h2>
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <WaveCard wave={record.wave} />
+          <WeatherCard weather={record.weather} />
+        </div>
+      </section>
 
-      <ScoreChart data={trend} />
+      <WeeklyForecast days={weekly} />
+
+      <section className="space-y-5">
+        <div className="rule-left space-y-1">
+          <span className="label-en">Records</span>
+          <h2 className="text-lg font-bold">これまでの推移</h2>
+        </div>
+        <ScoreChart data={trend} />
+      </section>
 
       <TipCard tip={tip} />
 
-      <p className="text-right text-xs text-muted-foreground">
-        最終更新: {formatJaDateTime(record.createdAt, location.timezone)}
+      <p className="border-t border-border/70 pt-6 text-right text-[11px] tracking-wider text-muted-foreground">
+        最終更新 {formatJaDateTime(record.createdAt, location.timezone)}
         {source === "live" && "（リアルタイム計算・未保存）"}
       </p>
     </div>

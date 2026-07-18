@@ -26,12 +26,12 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
   const isDanger = safety.level === "danger";
 
   return (
-    <Card className="overflow-hidden border-primary/25">
-      <div className="jade-shimmer">
-        <CardHeader className="flex flex-row items-start justify-between gap-3 pb-3">
-          <div className="space-y-0.5">
-            <CardTitle className="jade-text text-xl font-bold">今日、行くべき？</CardTitle>
-            <p className="text-xs text-muted-foreground">波・風・前日の海況からヒスイ拾い日和を判定</p>
+    <Card className="overflow-hidden">
+      <div className="washi">
+        <CardHeader className="flex flex-row items-start justify-between gap-3 pb-4">
+          <div className="space-y-1.5">
+            <span className="label-en">Should I go today?</span>
+            <CardTitle className="jade-text text-xl">今日、行くべき？</CardTitle>
           </div>
 
           <button
@@ -47,26 +47,26 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
           </button>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6 pb-7">
           {/* 安全警告はスコアより上に置き、最優先で目に入るようにする */}
           <SafetyAlertBanner safety={safety} />
 
           <RecommendationScore score={score} />
 
-          <div className="space-y-1.5">
-            <p className="text-sm leading-relaxed text-foreground/90">{comment}</p>
+          <div className="space-y-2 rounded-2xl bg-background/60 px-4 py-3">
+            <p className="text-sm leading-[1.9] text-foreground/90">{comment}</p>
             {commentSource === "ai" && !isDanger && (
-              <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
+              <p className="flex items-center gap-1.5 text-[10px] tracking-widest text-muted-foreground">
                 <Sparkles className="h-3 w-3" />
-                AIによるコメント
+                AIによる所見
               </p>
             )}
           </div>
 
           {previousDayBonus?.applied && (
-            <div className="flex gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3">
-              <TrendingUp className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-              <p className="text-sm leading-relaxed text-foreground/85">
+            <div className="flex gap-2.5 rounded-2xl border border-primary/30 bg-accent px-4 py-3">
+              <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <p className="text-sm leading-[1.9] text-foreground/85">
                 {previousDayBonus.message}
               </p>
             </div>

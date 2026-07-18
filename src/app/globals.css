@@ -2,63 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * 配色方針
+ * ---------------------------------------------------------------
+ * ヒスイの明るい緑と、海と空の水色を主役にした軽やかな配色。
+ * 差し色に陽だまりのような黄色と珊瑚色を添えて、
+ * 「浜を歩くのが楽しみになる」トーンにする。
+ * 角はしっかり丸め、影はやわらかく。
+ */
+
 @layer base {
   :root {
-    /* ライト: 白 × エメラルドグリーン × 淡いブルー基調 */
-    --background: 190 40% 98%;
-    --foreground: 165 30% 15%;
+    /* ほんのり水色を含んだ明るい背景 */
+    --background: 186 46% 97%;
+    --foreground: 195 30% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 165 30% 15%;
+    --card-foreground: 195 30% 20%;
 
-    --primary: 160 48% 38%;
+    /* 主役はあざやかな翡翠 */
+    --primary: 168 58% 40%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 195 55% 92%;
-    --secondary-foreground: 165 35% 20%;
+    --secondary: 186 60% 92%;
+    --secondary-foreground: 195 35% 25%;
 
-    --muted: 190 30% 94%;
-    --muted-foreground: 190 12% 42%;
+    --muted: 186 32% 94%;
+    --muted-foreground: 195 14% 45%;
 
-    --accent: 160 45% 90%;
-    --accent-foreground: 163 45% 22%;
+    --accent: 165 62% 92%;
+    --accent-foreground: 168 50% 26%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 356 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 190 25% 88%;
-    --input: 190 25% 88%;
-    --ring: 160 48% 42%;
+    --border: 186 26% 88%;
+    --input: 186 26% 88%;
+    --ring: 168 58% 45%;
 
-    --radius: 0.9rem;
+    --radius: 1rem;
+
+    /* 差し色 */
+    --sun: 42 95% 58%;
+    --coral: 8 82% 65%;
+    --sky: 197 82% 56%;
   }
 
   .dark {
-    /* ダーク: 深い翡翠グリーン基調 */
-    --background: 170 30% 8%;
-    --foreground: 160 25% 92%;
+    --background: 196 32% 11%;
+    --foreground: 180 22% 92%;
 
-    --card: 170 28% 12%;
-    --card-foreground: 160 25% 92%;
+    --card: 196 28% 15%;
+    --card-foreground: 180 22% 92%;
 
-    --primary: 160 46% 52%;
-    --primary-foreground: 170 40% 10%;
+    --primary: 168 55% 55%;
+    --primary-foreground: 196 32% 12%;
 
-    --secondary: 190 25% 18%;
-    --secondary-foreground: 160 25% 90%;
+    --secondary: 196 22% 22%;
+    --secondary-foreground: 180 20% 90%;
 
-    --muted: 175 20% 18%;
-    --muted-foreground: 175 12% 62%;
+    --muted: 196 20% 20%;
+    --muted-foreground: 186 12% 66%;
 
-    --accent: 165 30% 20%;
-    --accent-foreground: 160 30% 90%;
+    --accent: 168 30% 24%;
+    --accent-foreground: 168 45% 85%;
 
-    --destructive: 0 62% 45%;
+    --destructive: 356 62% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 175 18% 22%;
-    --input: 175 18% 22%;
-    --ring: 160 46% 52%;
+    --border: 196 16% 26%;
+    --input: 196 16% 26%;
+    --ring: 168 55% 55%;
+
+    --sun: 42 88% 62%;
+    --coral: 8 75% 66%;
+    --sky: 197 75% 60%;
   }
 }
 
@@ -70,77 +88,90 @@
     @apply bg-background text-foreground;
     font-feature-settings:
       "rlig" 1,
-      "calt" 1;
+      "calt" 1,
+      "palt" 1;
+    line-height: 1.85;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: 0.04em;
+    line-height: 1.55;
   }
 }
 
-/* ヒスイ海岸グラデーション背景 */
-.hisui-gradient {
-  background:
-    radial-gradient(circle at 15% 20%, hsl(195 60% 90% / 0.6), transparent 45%),
-    radial-gradient(circle at 85% 10%, hsl(160 55% 88% / 0.55), transparent 40%);
-}
-.dark .hisui-gradient {
-  background:
-    radial-gradient(circle at 15% 20%, hsl(190 40% 30% / 0.25), transparent 45%),
-    radial-gradient(circle at 85% 10%, hsl(160 45% 35% / 0.22), transparent 40%);
+/** セクションに添える小さな欧文ラベル */
+.label-en {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: hsl(var(--primary));
 }
 
-/* ヒスイの内部で光がゆらぐようなグラデーション。主役カードの背景に使う。 */
-.jade-shimmer {
-  background:
-    radial-gradient(ellipse at 20% 0%, hsl(160 70% 85% / 0.55), transparent 55%),
-    radial-gradient(ellipse at 85% 15%, hsl(195 75% 88% / 0.5), transparent 50%),
-    radial-gradient(ellipse at 60% 100%, hsl(150 60% 88% / 0.45), transparent 55%);
-  background-size: 200% 200%;
-  animation: jade-drift 18s ease-in-out infinite;
-}
-.dark .jade-shimmer {
-  background:
-    radial-gradient(ellipse at 20% 0%, hsl(160 55% 30% / 0.35), transparent 55%),
-    radial-gradient(ellipse at 85% 15%, hsl(195 55% 32% / 0.3), transparent 50%),
-    radial-gradient(ellipse at 60% 100%, hsl(150 50% 28% / 0.3), transparent 55%);
-  background-size: 200% 200%;
-  animation: jade-drift 18s ease-in-out infinite;
+/** 見出しの左に添える丸い縦罫 */
+.rule-left {
+  border-left: 3px solid hsl(var(--primary) / 0.85);
+  border-radius: 999px;
+  padding-left: 0.875rem;
 }
 
-@keyframes jade-drift {
-  0%,
-  100% {
-    background-position:
-      0% 0%,
-      100% 0%,
-      50% 100%;
-  }
-  50% {
-    background-position:
-      20% 20%,
-      80% 30%,
-      40% 70%;
-  }
+/** 主役カードの背景。海と浜のグラデーション */
+.washi {
+  background-image:
+    radial-gradient(ellipse at 8% 0%, hsl(168 75% 86% / 0.85), transparent 55%),
+    radial-gradient(ellipse at 95% 10%, hsl(196 85% 88% / 0.8), transparent 52%),
+    radial-gradient(ellipse at 50% 105%, hsl(42 90% 88% / 0.5), transparent 55%);
+}
+.dark .washi {
+  background-image:
+    radial-gradient(ellipse at 8% 0%, hsl(168 50% 30% / 0.55), transparent 55%),
+    radial-gradient(ellipse at 95% 10%, hsl(196 55% 30% / 0.5), transparent 52%),
+    radial-gradient(ellipse at 50% 105%, hsl(42 45% 28% / 0.35), transparent 55%);
 }
 
-/* 動きを減らす設定の人にはアニメーションを止める */
-@media (prefers-reduced-motion: reduce) {
-  .jade-shimmer {
-    animation: none;
-  }
-  * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+/** 数字は明朝で組み、他とちがう表情を出す */
+.numeral {
+  font-family: var(--font-noto-serif-jp), serif;
+  font-feature-settings: "palt" 0;
+  letter-spacing: 0;
 }
 
-/* 見出しをヒスイ色のグラデーションで塗る */
+/** ヒスイ色のグラデーション文字 */
 .jade-text {
-  background: linear-gradient(100deg, hsl(165 55% 34%), hsl(190 60% 45%), hsl(155 50% 40%));
+  background: linear-gradient(96deg, hsl(168 60% 38%), hsl(196 72% 48%), hsl(155 58% 44%));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 .dark .jade-text {
-  background: linear-gradient(100deg, hsl(160 55% 62%), hsl(190 60% 68%), hsl(150 50% 60%));
+  background: linear-gradient(96deg, hsl(168 60% 62%), hsl(196 72% 68%), hsl(155 55% 62%));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/** ふわりと浮くカード */
+.lift {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -14px hsl(195 40% 30% / 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .lift:hover {
+    transform: none;
+  }
 }

@@ -29,12 +29,13 @@ export default async function NearbyPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-10">
-      <div className="space-y-1">
-        <h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl">
-          <MapPin className="h-7 w-7 text-primary" />
+      <div className="space-y-2 border-b border-border/70 pb-8">
+        <span className="label-en">Stay &amp; Dine</span>
+        <h1 className="flex items-center gap-2.5 text-2xl">
+          <MapPin className="h-5 w-5 text-primary" />
           周辺の宿・ごはん
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs tracking-wider text-muted-foreground">
           ヒスイ海岸（富山県朝日町 宮崎・境海岸）周辺の宿泊施設と食事処です。
         </p>
       </div>

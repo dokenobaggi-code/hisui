@@ -25,12 +25,13 @@ export default async function HistoryPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      <div className="space-y-1">
-        <h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl">
-          <History className="h-7 w-7 text-primary" />
+      <div className="space-y-2 border-b border-border/70 pb-8">
+        <span className="label-en">Records</span>
+        <h1 className="flex items-center gap-2.5 text-2xl">
+          <History className="h-5 w-5 text-primary" />
           おすすめ度の履歴
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs tracking-wider text-muted-foreground">
           日次で保存されたヒスイ拾いおすすめ度の記録です。
         </p>
       </div>

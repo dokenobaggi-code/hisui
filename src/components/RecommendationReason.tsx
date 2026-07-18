@@ -26,7 +26,7 @@ const FACTOR_ICON: Record<FactorKey, typeof Waves> = {
  */
 export function RecommendationReason({ factors }: { factors: WeatherEvaluation[] }) {
   return (
-    <ul className="overflow-hidden rounded-xl border border-border/60">
+    <ul className="overflow-hidden rounded-2xl border border-border/60">
       {factors.map((factor, index) => {
         const style = GRADE_STYLES[factor.grade];
         const Icon = FACTOR_ICON[factor.key];
@@ -51,7 +51,7 @@ export function RecommendationReason({ factors }: { factors: WeatherEvaluation[]
             </span>
 
             {/* 素点バー */}
-            <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+            <span className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
               <span
                 className={cn("block h-full rounded-full transition-all duration-700", style.bar)}
                 style={{ width: `${Math.max(4, Math.round(factor.score))}%` }}

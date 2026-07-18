@@ -14,6 +14,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-noto-sans-jp)", "system-ui", "sans-serif"],
+        serif: ["var(--font-noto-serif-jp)", "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",

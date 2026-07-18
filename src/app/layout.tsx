@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_JP } from "next/font/google";
+import { Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/Header";
@@ -9,6 +9,15 @@ const notoSansJp = Noto_Sans_JP({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
   variable: "--font-noto-sans-jp",
+  display: "swap",
+  preload: false,
+});
+
+/** 見出し・数字用の明朝体。旅館サイトの静かな佇まいを出すために使う。 */
+const notoSerifJp = Noto_Serif_JP({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-noto-serif-jp",
   display: "swap",
   preload: false,
 });
@@ -33,7 +42,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja" suppressHydrationWarning>
-      <body className={`${notoSansJp.variable} font-sans antialiased`}>
+      <body
+        className={`${notoSansJp.variable} ${notoSerifJp.variable} font-sans antialiased`}
+      >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex min-h-screen flex-col">
             <Header />

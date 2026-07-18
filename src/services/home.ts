@@ -10,6 +10,7 @@ import { buildDailyRecord } from "@/services/pipeline";
 import { getLatestRecord, getScoreTrend } from "@/services/notion";
 import { fetchTideInfo } from "@/services/tide";
 import { fetchPreviousDayInfo } from "@/services/previousDay";
+import { fetchWeeklyForecast, type DailyForecast } from "@/services/forecast";
 import { evaluateRecommendation } from "@/services/recommendation";
 import type { DailyRecord, ScoreTrendPoint } from "@/types";
 import type { PreviousDayInfo, Recommendation, TideInfo } from "@/types/recommendation";
@@ -24,6 +25,8 @@ export interface HomeData {
   tide: TideInfo;
   /** 前日の海況 */
   previousDay: PreviousDayInfo;
+  /** 向こう1週間のおすすめ度 */
+  weekly: DailyForecast[];
 }
 
 export async function getHomeData(): Promise<HomeData> {
@@ -42,8 +45,13 @@ export async function getHomeData(): Promise<HomeData> {
   // フォールバック: その場で観測＋判定（保存はしない）
   const resolved = record ?? (await buildDailyRecord());
 
-  // 潮位・前日海況はライブ取得（いずれも内部で例外を握りつぶし、失敗時は既定値を返す）
-  const [tide, previousDay] = await Promise.all([fetchTideInfo(), fetchPreviousDayInfo()]);
+  // 潮位・前日海況・週間予報はライブ取得
+  //（いずれも内部で例外を握りつぶし、失敗時は既定値を返す）
+  const [tide, previousDay, weekly] = await Promise.all([
+    fetchTideInfo(),
+    fetchPreviousDayInfo(),
+    fetchWeeklyForecast(),
+  ]);
 
   const recommendation = evaluateRecommendation(
     { wave: resolved.wave, weather: resolved.weather, tide, previousDay },
@@ -58,5 +66,6 @@ export async function getHomeData(): Promise<HomeData> {
     recommendation,
     tide,
     previousDay,
+    weekly,
   };
 }
