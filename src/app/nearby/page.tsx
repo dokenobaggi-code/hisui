@@ -10,11 +10,18 @@ import { location } from "@/lib/config";
 export const metadata: Metadata = {
   title: "周辺の宿・ごはん",
   description:
-    "ヒスイ海岸（富山県朝日町 宮崎・境海岸）周辺の宿泊施設と飲食店。アクセス、予約サイト・食べログへのリンクをまとめています。",
+    "ヒスイ海岸（富山県朝日町 宮崎・境海岸）周辺の宿泊施設と飲食店。公共交通機関でのアクセス、公式・予約サイト、食べログへのリンクをまとめています。",
 };
 
 // 空室状況は変動するため動的レンダリング。
 export const dynamic = "force-dynamic";
+
+/** ページ内リンク（目次）。セクションが増えたらここに足すだけでよい。 */
+const SECTIONS = [
+  { id: "stay", label: "泊まる", icon: Bed },
+  { id: "eat", label: "ごはん", icon: UtensilsCrossed },
+  { id: "info", label: "立ち寄る", icon: MapPin },
+] as const;
 
 export default async function NearbyPage() {
   const today = todayIsoInJst(location.timezone);
@@ -32,7 +39,30 @@ export default async function NearbyPage() {
         </p>
       </div>
 
-      <section className="space-y-4">
+      {/* 目次：各セクションへジャンプ */}
+      <nav
+        aria-label="ページ内目次"
+        className="sticky top-16 z-30 -mx-2 rounded-xl border border-border/60 bg-background/90 p-2 backdrop-blur"
+      >
+        <ul className="flex gap-2">
+          {SECTIONS.map((section) => {
+            const Icon = section.icon;
+            return (
+              <li key={section.id} className="flex-1">
+                <a
+                  href={`#${section.id}`}
+                  className="flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+                >
+                  <Icon className="h-4 w-4 text-primary" />
+                  {section.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      <section id="stay" className="scroll-mt-32 space-y-4">
         <h2 className="flex items-center gap-2 text-lg font-bold">
           <Bed className="h-5 w-5 text-primary" />
           泊まる
@@ -40,6 +70,7 @@ export default async function NearbyPage() {
         <p className="text-sm text-muted-foreground">
           ヒスイ海岸に近い順に並べています。荒天の翌朝は狙い目なので、前泊すると朝いちばんの浜を歩けます。
         </p>
+
         <VacancyList result={vacancies} knownSpots={ACCOMMODATIONS} />
 
         <div className="grid gap-4">
@@ -55,10 +86,10 @@ export default async function NearbyPage() {
         </div>
       </section>
 
-      <section className="space-y-4">
+      <section id="eat" className="scroll-mt-32 space-y-4">
         <h2 className="flex items-center gap-2 text-lg font-bold">
           <UtensilsCrossed className="h-5 w-5 text-primary" />
-          食べる
+          ごはん
         </h2>
         <p className="text-sm text-muted-foreground">
           この地域の名物は、スケトウダラとごぼう・ねぎを味噌で煮込んだ郷土料理「たら汁」です。国道8号沿いは
@@ -71,7 +102,7 @@ export default async function NearbyPage() {
         </div>
       </section>
 
-      <section className="space-y-4">
+      <section id="info" className="scroll-mt-32 space-y-4">
         <h2 className="flex items-center gap-2 text-lg font-bold">
           <MapPin className="h-5 w-5 text-primary" />
           立ち寄る
@@ -85,7 +116,6 @@ export default async function NearbyPage() {
 
       <p className="rounded-lg border border-border/60 bg-muted/40 p-4 text-xs leading-relaxed text-muted-foreground">
         ※ 営業時間・定休日・料金・空室状況は変動します。おでかけ前に各施設の公式サイト・予約サイト・食べログで最新の情報をご確認ください。
-        掲載情報は朝日町観光協会「あさひ暮らし旅」および朝日町公式サイトを参考にしています。
       </p>
     </div>
   );

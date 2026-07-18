@@ -25,8 +25,13 @@ export interface SpotLink {
 export interface SpotAccess {
   /** ヒスイ海岸からの距離・所要時間（確認できた表現のみ。無い場合は null） */
   fromCoast: string | null;
-  /** 公共交通機関でのアクセス（無い場合は null） */
-  transit: string | null;
+  /** 公共交通機関だけで行けるか */
+  transitAvailable: boolean;
+  /**
+   * 公共交通機関での行き方。
+   * transitAvailable が false の場合は、代わりの行き方（送迎・タクシー等）を書く。
+   */
+  transit: string;
   /** 車でのアクセス（無い場合は null） */
   car: string | null;
 }

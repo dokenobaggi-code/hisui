@@ -1,9 +1,9 @@
 import {
   Bed,
   ExternalLink,
-  Footprints,
   Car,
   MapPin,
+  TrainFront,
   UtensilsCrossed,
   Info as InfoIcon,
 } from "lucide-react";
@@ -92,29 +92,40 @@ export function NearbySpotCard({ spot, vacancy }: NearbySpotCardProps) {
           </div>
         )}
 
-        {/* アクセス情報（確認できた項目のみ表示） */}
-        {(spot.access.fromCoast || spot.access.transit || spot.access.car) && (
-          <ul className="space-y-1.5 rounded-lg bg-muted/40 p-3 text-sm">
-            {spot.access.fromCoast && (
-              <li className="flex items-start gap-2">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-sky-500" />
-                <span>{spot.access.fromCoast}</span>
-              </li>
-            )}
-            {spot.access.transit && (
-              <li className="flex items-start gap-2">
-                <Footprints className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                <span>{spot.access.transit}</span>
-              </li>
-            )}
-            {spot.access.car && (
-              <li className="flex items-start gap-2">
-                <Car className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
-                <span>{spot.access.car}</span>
-              </li>
-            )}
-          </ul>
-        )}
+        {/* アクセス情報。公共交通機関で行けるかを必ず示す */}
+        <ul className="space-y-2 rounded-lg bg-muted/40 p-3 text-sm">
+          {spot.access.fromCoast && (
+            <li className="flex items-start gap-2">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-sky-500" />
+              <span>{spot.access.fromCoast}</span>
+            </li>
+          )}
+          <li className="flex items-start gap-2">
+            <TrainFront
+              className={`mt-0.5 h-4 w-4 shrink-0 ${
+                spot.access.transitAvailable ? "text-emerald-500" : "text-orange-500"
+              }`}
+            />
+            <span>
+              <span
+                className={`mr-1.5 font-semibold ${
+                  spot.access.transitAvailable
+                    ? "text-emerald-700 dark:text-emerald-400"
+                    : "text-orange-700 dark:text-orange-400"
+                }`}
+              >
+                {spot.access.transitAvailable ? "公共交通機関で行けます" : "車・送迎が必要です"}
+              </span>
+              {spot.access.transit}
+            </span>
+          </li>
+          {spot.access.car && (
+            <li className="flex items-start gap-2">
+              <Car className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+              <span>{spot.access.car}</span>
+            </li>
+          )}
+        </ul>
 
         <div className="flex flex-wrap gap-2">
           {spot.links.map((link) => (
