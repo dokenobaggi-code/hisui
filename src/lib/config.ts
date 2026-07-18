@@ -55,6 +55,32 @@ export const cronConfig = {
   },
 };
 
+/**
+ * 楽天ウェブサービス（楽天トラベル空室検索API）設定。
+ *
+ * すべて任意。未設定の場合はリアルタイム空室表示のみ無効化され、
+ * 周辺スポットの静的な掲載は通常どおり動作する。
+ *
+ * applicationId と accessKey の両方が必要（accessKey は2024年以降の必須項目）。
+ * https://webservice.rakuten.co.jp/app/list で確認できる。
+ */
+export const rakutenConfig = {
+  get applicationId(): string | null {
+    return process.env.RAKUTEN_APPLICATION_ID?.trim() || null;
+  },
+  get accessKey(): string | null {
+    return process.env.RAKUTEN_ACCESS_KEY?.trim() || null;
+  },
+  /** 楽天アフィリエイトID（任意）。設定するとリンクがアフィリエイト経由になる。 */
+  get affiliateId(): string | null {
+    return process.env.RAKUTEN_AFFILIATE_ID?.trim() || null;
+  },
+  /** 空室検索が利用可能か */
+  get isEnabled(): boolean {
+    return this.applicationId !== null && this.accessKey !== null;
+  },
+};
+
 /** Notion データベースのプロパティ名。DB側の列名と一致させる。 */
 export const NOTION_PROPS = {
   Date: "Date",

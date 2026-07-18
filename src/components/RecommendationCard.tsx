@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, Sparkles } from "lucide-react";
+import { ChevronDown, Sparkles, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RecommendationScore } from "@/components/RecommendationScore";
 import { RecommendationReason } from "@/components/RecommendationReason";
 import { RecommendationDetail } from "@/components/RecommendationDetail";
+import { SafetyAlertBanner } from "@/components/SafetyAlertBanner";
 import { cn } from "@/lib/utils";
 import type { Recommendation } from "@/types/recommendation";
 
@@ -21,7 +22,8 @@ interface RecommendationCardProps {
  */
 export function RecommendationCard({ recommendation }: RecommendationCardProps) {
   const [open, setOpen] = useState(false);
-  const { score, comment, reason, commentSource } = recommendation;
+  const { score, comment, reason, commentSource, safety, previousDayBonus } = recommendation;
+  const isDanger = safety.level === "danger";
 
   return (
     <Card className="overflow-hidden border-primary/20">
@@ -46,17 +48,29 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
         </CardHeader>
 
         <CardContent className="space-y-4">
+          {/* 安全警告はスコアより上に置き、最優先で目に入るようにする */}
+          <SafetyAlertBanner safety={safety} />
+
           <RecommendationScore score={score} />
 
           <div className="space-y-1.5">
             <p className="text-sm leading-relaxed text-foreground/90">{comment}</p>
-            {commentSource === "ai" && (
+            {commentSource === "ai" && !isDanger && (
               <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
                 <Sparkles className="h-3 w-3" />
                 AIによるコメント
               </p>
             )}
           </div>
+
+          {previousDayBonus?.applied && (
+            <div className="flex gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3">
+              <TrendingUp className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <p className="text-sm leading-relaxed text-foreground/85">
+                {previousDayBonus.message}
+              </p>
+            </div>
+          )}
 
           <RecommendationReason factors={reason.factors} />
 

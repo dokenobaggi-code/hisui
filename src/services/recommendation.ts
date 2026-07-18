@@ -16,13 +16,24 @@
 import { degreesToCompassJa } from "@/lib/utils";
 import type {
   Grade,
+  PreviousDayInfo,
   Recommendation,
   RecommendationScore,
+  SafetyAlert,
   StarLevel,
   TideInfo,
   WeatherEvaluation,
 } from "@/types/recommendation";
 import type { WaveInfo, WeatherInfo } from "@/types";
+
+/**
+ * 危険とみなす波高 (m)。
+ * これ以上の場合はスコアに関わらず「行かないべき」と判定する。
+ */
+export const DANGER_WAVE_HEIGHT = 1.5;
+
+/** 前日が荒れていた場合の加点（満点100に対して）。 */
+export const PREVIOUS_DAY_BONUS_POINTS = 10;
 
 /** 各項目の重み（合計100）。バランス調整はここだけ触ればよい。 */
 export const FACTOR_WEIGHTS = {
@@ -40,6 +51,8 @@ export interface EvaluateInput {
   wave: WaveInfo;
   weather: WeatherInfo;
   tide?: TideInfo;
+  /** 前日の海況（荒れた翌日は加点される） */
+  previousDay?: PreviousDayInfo;
 }
 
 export interface EvaluateOptions {
@@ -320,10 +333,55 @@ function buildComment(score: RecommendationScore, factors: WeatherEvaluation[]):
   return `${head}${positivePart}${negativePart}`;
 }
 
+// ---------- 安全判定 ----------
+
+/**
+ * 安全アラートを判定する。
+ * 波高 DANGER_WAVE_HEIGHT (1.5m) 以上は、他の条件がどれだけ良くても危険とみなす。
+ */
+export function evaluateSafety(wave: WaveInfo, weather: WeatherInfo): SafetyAlert {
+  if (wave.waveHeight >= DANGER_WAVE_HEIGHT) {
+    return {
+      level: "danger",
+      title: "本日は危険です。海岸に行かないでください",
+      message:
+        `波高が${wave.waveHeight.toFixed(1)}mあります。` +
+        `高波は不意に足元をさらい、海に引き込まれる危険があります。` +
+        `波が落ち着くまで海岸への立ち入りは避けてください。`,
+    };
+  }
+
+  if ([95, 96, 99].includes(weather.weatherCode)) {
+    return {
+      level: "danger",
+      title: "本日は危険です。海岸に行かないでください",
+      message:
+        "雷雨が予想されています。海岸や砂浜は落雷の危険が高い場所です。天候が回復するまで待ってください。",
+    };
+  }
+
+  if (wave.waveHeight >= 1.0 || wave.windSpeed >= 10) {
+    return {
+      level: "caution",
+      title: "注意が必要です",
+      message:
+        `波高${wave.waveHeight.toFixed(1)}m・風速${wave.windSpeed.toFixed(1)}m/sです。` +
+        `波打ち際には近づきすぎず、単独での行動は避けてください。`,
+    };
+  }
+
+  return { level: "none", title: "", message: "" };
+}
+
 // ---------- 公開API ----------
 
 /**
- * 波・天気・潮位から「今日行くべき？」を判定する。
+ * 波・天気・潮位・前日の海況から「今日行くべき？」を判定する。
+ *
+ * 判定の優先順位:
+ *   1. 安全判定（波高1.5m以上などは最低ランクへ強制）
+ *   2. 各項目の重み付きスコア
+ *   3. 前日が荒れていた場合の加点
  *
  * @param input 判定に使う観測値
  * @param options AIコメントなどの任意設定
@@ -333,21 +391,77 @@ export function evaluateRecommendation(
   options: EvaluateOptions = {},
 ): Recommendation {
   const factors = buildFactors(input);
+  const safety = evaluateSafety(input.wave, input.weather);
 
   const totalWeight = factors.reduce((sum, f) => sum + f.weight, 0);
   const weighted = factors.reduce((sum, f) => sum + f.score * f.weight, 0);
-  const score = toRecommendationScore(totalWeight === 0 ? 0 : weighted / totalWeight);
+  const baseScore = totalWeight === 0 ? 0 : weighted / totalWeight;
 
-  const aiComment = options.aiComment?.trim();
-  const comment = aiComment && aiComment !== "" ? aiComment : buildComment(score, factors);
+  // 前日が荒れていた場合、当日が安全な範囲であれば加点する。
+  const previousDay = input.previousDay;
+  const bonusApplies =
+    previousDay?.wasRough === true && safety.level !== "danger" && input.wave.waveHeight < 1.2;
+
+  const bonusPoints = bonusApplies ? PREVIOUS_DAY_BONUS_POINTS : 0;
+
+  // 危険時はスコアを最低ランク（★1帯）へ強制する。
+  const finalValue = safety.level === "danger" ? Math.min(baseScore, 20) : baseScore + bonusPoints;
+
+  const score = toRecommendationScore(finalValue);
+
+  const highlights = factors.map((f) => f.detail);
+  if (previousDay && previousDay.description !== "") {
+    highlights.push(previousDay.description);
+  }
+
+  const comment = buildFinalComment({
+    score,
+    factors,
+    safety,
+    bonusApplies,
+    aiComment: options.aiComment,
+  });
 
   return {
     score,
-    comment,
-    commentSource: aiComment && aiComment !== "" ? "ai" : "rule",
-    reason: {
-      factors,
-      highlights: factors.map((f) => f.detail),
-    },
+    comment: comment.text,
+    commentSource: comment.source,
+    safety,
+    previousDayBonus: previousDay
+      ? {
+          applied: bonusApplies,
+          points: bonusPoints,
+          message: bonusApplies
+            ? `前日が荒れていたため +${bonusPoints}点。新しいヒスイが打ち上がっている可能性があります。`
+            : previousDay.description,
+        }
+      : null,
+    reason: { factors, highlights },
   };
+}
+
+/** 安全警告・前日ボーナスを踏まえた最終コメントを組み立てる。 */
+function buildFinalComment(params: {
+  score: RecommendationScore;
+  factors: WeatherEvaluation[];
+  safety: SafetyAlert;
+  bonusApplies: boolean;
+  aiComment?: string;
+}): { text: string; source: "ai" | "rule" } {
+  const { score, factors, safety, bonusApplies, aiComment } = params;
+
+  // 危険時は、AIコメントより安全メッセージを優先する。
+  if (safety.level === "danger") {
+    return { text: safety.message, source: "rule" };
+  }
+
+  const trimmed = aiComment?.trim();
+  const base = trimmed && trimmed !== "" ? trimmed : buildComment(score, factors);
+  const source: "ai" | "rule" = trimmed && trimmed !== "" ? "ai" : "rule";
+
+  const bonusSentence = bonusApplies
+    ? "前日が荒れていたため、新しいヒスイが打ち上げられている可能性があります。"
+    : "";
+
+  return { text: `${base}${bonusSentence}`, source };
 }

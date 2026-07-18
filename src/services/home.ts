@@ -9,9 +9,10 @@
 import { buildDailyRecord } from "@/services/pipeline";
 import { getLatestRecord, getScoreTrend } from "@/services/notion";
 import { fetchTideInfo } from "@/services/tide";
+import { fetchPreviousDayInfo } from "@/services/previousDay";
 import { evaluateRecommendation } from "@/services/recommendation";
 import type { DailyRecord, ScoreTrendPoint } from "@/types";
-import type { Recommendation, TideInfo } from "@/types/recommendation";
+import type { PreviousDayInfo, Recommendation, TideInfo } from "@/types/recommendation";
 
 export interface HomeData {
   record: DailyRecord;
@@ -21,6 +22,8 @@ export interface HomeData {
   /** 「今日行くべき？」判定 */
   recommendation: Recommendation;
   tide: TideInfo;
+  /** 前日の海況 */
+  previousDay: PreviousDayInfo;
 }
 
 export async function getHomeData(): Promise<HomeData> {
@@ -39,11 +42,11 @@ export async function getHomeData(): Promise<HomeData> {
   // フォールバック: その場で観測＋判定（保存はしない）
   const resolved = record ?? (await buildDailyRecord());
 
-  // 潮位はライブ取得（内部で例外を握りつぶし、失敗時は「不明」を返す）
-  const tide = await fetchTideInfo();
+  // 潮位・前日海況はライブ取得（いずれも内部で例外を握りつぶし、失敗時は既定値を返す）
+  const [tide, previousDay] = await Promise.all([fetchTideInfo(), fetchPreviousDayInfo()]);
 
   const recommendation = evaluateRecommendation(
-    { wave: resolved.wave, weather: resolved.weather, tide },
+    { wave: resolved.wave, weather: resolved.weather, tide, previousDay },
     // 既存のAI判定理由があればコメントとして活用する
     { aiComment: resolved.judgement.reason },
   );
@@ -54,5 +57,6 @@ export async function getHomeData(): Promise<HomeData> {
     source,
     recommendation,
     tide,
+    previousDay,
   };
 }

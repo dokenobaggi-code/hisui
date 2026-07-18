@@ -60,6 +60,36 @@ export interface RecommendationReason {
   highlights: string[];
 }
 
+/** 安全に関する警告レベル。 */
+export type SafetyLevel = "danger" | "caution" | "none";
+
+/**
+ * 安全アラート。
+ * スコアの高低に関わらず最優先で表示する。
+ * 高波など人命に関わる条件では danger とし、判定を最低ランクへ強制する。
+ */
+export interface SafetyAlert {
+  level: SafetyLevel;
+  /** 見出し（例: 「本日は危険です。海岸に近づかないでください」） */
+  title: string;
+  /** 補足説明 */
+  message: string;
+}
+
+/** 前日の海況（荒れた翌日はヒスイが打ち上がりやすい）。 */
+export interface PreviousDayInfo {
+  /** 前日の最大波高 (m)。取得できない場合は null */
+  maxWaveHeight: number | null;
+  /** 前日の最大風速 (m/s) */
+  maxWindSpeed: number | null;
+  /** 前日の代表的な天気コード */
+  weatherCode: number | null;
+  /** 前日が荒れていたか */
+  wasRough: boolean;
+  /** 表示用の説明文 */
+  description: string;
+}
+
 /** 「今日行くべき？」判定の最終結果。 */
 export interface Recommendation {
   score: RecommendationScore;
@@ -68,6 +98,14 @@ export interface Recommendation {
   reason: RecommendationReason;
   /** コメントの生成元。将来AIコメントを足したときの出し分けに使う */
   commentSource: "ai" | "rule";
+  /** 安全アラート（danger の場合はカード最上部に強調表示） */
+  safety: SafetyAlert;
+  /** 前日の海況による補正（該当しない場合は null） */
+  previousDayBonus: {
+    applied: boolean;
+    points: number;
+    message: string;
+  } | null;
 }
 
 /** 潮位情報。 */

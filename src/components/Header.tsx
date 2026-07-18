@@ -21,6 +21,12 @@ export function Header() {
             今日
           </Link>
           <Link
+            href="/nearby"
+            className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            宿・ごはん
+          </Link>
+          <Link
             href="/history"
             className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
