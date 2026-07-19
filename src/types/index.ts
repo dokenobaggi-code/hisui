@@ -31,6 +31,8 @@ export interface WeatherInfo {
   lowTemperature: number;
   /** 降水確率 (%) */
   rainProbability: number;
+  /** その日のUVインデックス最大値（0〜11+）。取得できない場合は null */
+  uvIndexMax: number | null;
 }
 
 /** AI判定結果 */

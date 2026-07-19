@@ -30,8 +30,8 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
       <div className="washi">
         <CardHeader className="flex flex-row items-start justify-between gap-3 pb-4">
           <div className="space-y-1.5">
-            <span className="label-en">Should I go today?</span>
-            <CardTitle className="jade-text text-xl">今日、行くべき？</CardTitle>
+            <span className="label-en">Today&apos;s rating</span>
+            <CardTitle className="jade-text text-xl">今日のおすすめ度</CardTitle>
           </div>
 
           <button

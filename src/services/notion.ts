@@ -211,6 +211,7 @@ function pageToDailyRecord(page: PageObjectResponse): DailyRecord {
       highTemperature: readNumber(page, NOTION_PROPS.HighTemperature) ?? 0,
       lowTemperature: readNumber(page, NOTION_PROPS.LowTemperature) ?? 0,
       rainProbability: readNumber(page, NOTION_PROPS.RainProbability) ?? 0,
+      uvIndexMax: null,
     },
     judgement: {
       score: readNumber(page, NOTION_PROPS.AIScore) ?? 0,

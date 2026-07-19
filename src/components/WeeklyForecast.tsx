@@ -60,7 +60,7 @@ export function WeeklyForecast({ days }: { days: DailyForecast[] }) {
         <h2 className="text-lg font-bold">週間おすすめ度</h2>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_4px_16px_-10px_hsl(195_40%_30%/0.25)]">
+      <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_4px_16px_-10px_hsl(130_30%_28%/0.22)]">
         <ul>
           {days.map((day, index) => {
             const { day: label, weekday } = formatDay(day.date);

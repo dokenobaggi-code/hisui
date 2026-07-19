@@ -13,70 +13,75 @@
 
 @layer base {
   :root {
-    /* ほんのり水色を含んだ明るい背景 */
-    --background: 186 46% 97%;
-    --foreground: 195 30% 20%;
+    /* クリーム色の背景。紙のような温かみ */
+    --background: 44 46% 96%;
+    --foreground: 130 16% 22%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 195 30% 20%;
+    /* カードはほんのり黄みのある白 */
+    --card: 45 54% 98%;
+    --card-foreground: 130 16% 22%;
 
-    /* 主役はあざやかな翡翠 */
-    --primary: 168 58% 40%;
-    --primary-foreground: 0 0% 100%;
+    /* 主役は少し黄みを含んだ、やわらかい葉っぱの緑 */
+    --primary: 150 42% 40%;
+    --primary-foreground: 45 54% 98%;
 
-    --secondary: 186 60% 92%;
-    --secondary-foreground: 195 35% 25%;
+    --secondary: 90 34% 90%;
+    --secondary-foreground: 130 20% 26%;
 
-    --muted: 186 32% 94%;
-    --muted-foreground: 195 14% 45%;
+    --muted: 44 28% 92%;
+    --muted-foreground: 130 10% 42%;
 
-    --accent: 165 62% 92%;
-    --accent-foreground: 168 50% 26%;
+    --accent: 100 40% 90%;
+    --accent-foreground: 150 40% 26%;
 
-    --destructive: 356 72% 55%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 8 74% 56%;
+    --destructive-foreground: 45 54% 98%;
 
-    --border: 186 26% 88%;
-    --input: 186 26% 88%;
-    --ring: 168 58% 45%;
+    /* 罫線も茶みを帯びて柔らかく */
+    --border: 42 26% 85%;
+    --input: 42 26% 85%;
+    --ring: 150 42% 44%;
 
-    --radius: 1rem;
+    --radius: 1.1rem;
 
-    /* 差し色 */
-    --sun: 42 95% 58%;
-    --coral: 8 82% 65%;
-    --sky: 197 82% 56%;
+    /* 差し色: 陽だまりの黄・珊瑚・空・若葉 */
+    --sun: 40 92% 60%;
+    --coral: 12 80% 66%;
+    --sky: 196 66% 58%;
+    --leaf: 96 46% 52%;
   }
 
   .dark {
-    --background: 196 32% 11%;
-    --foreground: 180 22% 92%;
+    /* 夜の森。墨緑を深く、若葉をわずかに明るく */
+    --background: 140 16% 11%;
+    --foreground: 44 24% 90%;
 
-    --card: 196 28% 15%;
-    --card-foreground: 180 22% 92%;
+    --card: 140 14% 14%;
+    --card-foreground: 44 24% 90%;
 
-    --primary: 168 55% 55%;
-    --primary-foreground: 196 32% 12%;
+    --primary: 140 40% 56%;
+    --primary-foreground: 140 16% 12%;
 
-    --secondary: 196 22% 22%;
-    --secondary-foreground: 180 20% 90%;
+    --secondary: 130 12% 22%;
+    --secondary-foreground: 44 22% 88%;
 
-    --muted: 196 20% 20%;
-    --muted-foreground: 186 12% 66%;
+    --muted: 140 10% 19%;
+    --muted-foreground: 44 12% 66%;
 
-    --accent: 168 30% 24%;
-    --accent-foreground: 168 45% 85%;
+    --accent: 140 22% 24%;
+    --accent-foreground: 100 40% 82%;
 
-    --destructive: 356 62% 55%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 8 62% 56%;
+    --destructive-foreground: 44 24% 94%;
 
-    --border: 196 16% 26%;
-    --input: 196 16% 26%;
-    --ring: 168 55% 55%;
+    --border: 140 10% 25%;
+    --input: 140 10% 25%;
+    --ring: 140 40% 56%;
 
-    --sun: 42 88% 62%;
-    --coral: 8 75% 66%;
-    --sky: 197 75% 60%;
+    --sun: 40 82% 64%;
+    --coral: 12 72% 66%;
+    --sky: 196 60% 62%;
+    --leaf: 96 42% 58%;
   }
 }
 
@@ -117,18 +122,15 @@
   padding-left: 0.875rem;
 }
 
-/** 主役カードの背景。海と浜のグラデーション */
+/**
+ * 主役カードの地色。
+ * グラデーションは使わず、若葉色をほんのり敷いたフラットな面にする。
+ */
 .washi {
-  background-image:
-    radial-gradient(ellipse at 8% 0%, hsl(168 75% 86% / 0.85), transparent 55%),
-    radial-gradient(ellipse at 95% 10%, hsl(196 85% 88% / 0.8), transparent 52%),
-    radial-gradient(ellipse at 50% 105%, hsl(42 90% 88% / 0.5), transparent 55%);
+  background-color: hsl(100 40% 95%);
 }
 .dark .washi {
-  background-image:
-    radial-gradient(ellipse at 8% 0%, hsl(168 50% 30% / 0.55), transparent 55%),
-    radial-gradient(ellipse at 95% 10%, hsl(196 55% 30% / 0.5), transparent 52%),
-    radial-gradient(ellipse at 50% 105%, hsl(42 45% 28% / 0.35), transparent 55%);
+  background-color: hsl(140 16% 16%);
 }
 
 /** 数字は明朝で組み、他とちがう表情を出す */
@@ -138,18 +140,12 @@
   letter-spacing: 0;
 }
 
-/** ヒスイ色のグラデーション文字 */
+/** 見出しは単色の葉緑。グラデーションを避けてフラットに */
 .jade-text {
-  background: linear-gradient(96deg, hsl(168 60% 38%), hsl(196 72% 48%), hsl(155 58% 44%));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: hsl(150 44% 34%);
 }
 .dark .jade-text {
-  background: linear-gradient(96deg, hsl(168 60% 62%), hsl(196 72% 68%), hsl(155 55% 62%));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: hsl(140 42% 62%);
 }
 
 /** ふわりと浮くカード */
@@ -160,7 +156,7 @@
 }
 .lift:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px -14px hsl(195 40% 30% / 0.35);
+  box-shadow: 0 12px 28px -14px hsl(130 30% 28% / 0.32);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -23,6 +23,7 @@ interface ForecastResponse {
     temperature_2m_min?: number[];
     precipitation_probability_max?: number[];
     weather_code?: number[];
+    uv_index_max?: (number | null)[];
   };
 }
 
@@ -44,7 +45,7 @@ export async function fetchWeatherInfo(): Promise<WeatherInfo> {
   const url =
     `${FORECAST_ENDPOINT}?latitude=${latitude}&longitude=${longitude}` +
     `&current=temperature_2m,weather_code` +
-    `&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code` +
+    `&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code,uv_index_max` +
     `&forecast_days=1&timezone=${encodeURIComponent(timezone)}`;
 
   const data = await fetchJson<ForecastResponse>(url);
@@ -61,5 +62,7 @@ export async function fetchWeatherInfo(): Promise<WeatherInfo> {
     highTemperature: data.daily?.temperature_2m_max?.[0] ?? 0,
     lowTemperature: data.daily?.temperature_2m_min?.[0] ?? 0,
     rainProbability: data.daily?.precipitation_probability_max?.[0] ?? 0,
+    uvIndexMax:
+      typeof data.daily?.uv_index_max?.[0] === "number" ? data.daily.uv_index_max[0]! : null,
   };
 }

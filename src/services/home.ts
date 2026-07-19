@@ -11,6 +11,7 @@ import { getLatestRecord, getScoreTrend } from "@/services/notion";
 import { fetchTideInfo } from "@/services/tide";
 import { fetchPreviousDayInfo } from "@/services/previousDay";
 import { fetchWeeklyForecast, type DailyForecast } from "@/services/forecast";
+import { fetchPastWeekWaves, type PastWaveSummary } from "@/services/pastWaves";
 import { evaluateRecommendation } from "@/services/recommendation";
 import type { DailyRecord, ScoreTrendPoint } from "@/types";
 import type { PreviousDayInfo, Recommendation, TideInfo } from "@/types/recommendation";
@@ -27,6 +28,8 @@ export interface HomeData {
   previousDay: PreviousDayInfo;
   /** 向こう1週間のおすすめ度 */
   weekly: DailyForecast[];
+  /** 過去1週間の波（ヒスイ拡散の目安） */
+  pastWaves: PastWaveSummary;
 }
 
 export async function getHomeData(): Promise<HomeData> {
@@ -47,10 +50,11 @@ export async function getHomeData(): Promise<HomeData> {
 
   // 潮位・前日海況・週間予報はライブ取得
   //（いずれも内部で例外を握りつぶし、失敗時は既定値を返す）
-  const [tide, previousDay, weekly] = await Promise.all([
+  const [tide, previousDay, weekly, pastWaves] = await Promise.all([
     fetchTideInfo(),
     fetchPreviousDayInfo(),
     fetchWeeklyForecast(),
+    fetchPastWeekWaves(),
   ]);
 
   const recommendation = evaluateRecommendation(
@@ -67,5 +71,6 @@ export async function getHomeData(): Promise<HomeData> {
     tide,
     previousDay,
     weekly,
+    pastWaves,
   };
 }

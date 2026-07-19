@@ -48,6 +48,7 @@ interface ForecastDaily {
     precipitation_probability_max?: (number | null)[];
     wind_speed_10m_max?: (number | null)[];
     wind_direction_10m_dominant?: (number | null)[];
+    uv_index_max?: (number | null)[];
   };
 }
 
@@ -122,7 +123,7 @@ export async function fetchWeeklyForecast(): Promise<DailyForecast[]> {
     const forecastUrl =
       `${FORECAST_ENDPOINT}?latitude=${latitude}&longitude=${longitude}` +
       `&daily=weather_code,temperature_2m_max,temperature_2m_min,` +
-      `precipitation_probability_max,wind_speed_10m_max,wind_direction_10m_dominant` +
+      `precipitation_probability_max,wind_speed_10m_max,wind_direction_10m_dominant,uv_index_max` +
       `&wind_speed_unit=ms&past_days=1&forecast_days=${FORECAST_DAYS}&timezone=${tz}`;
 
     const [marine, forecast] = await Promise.all([
@@ -158,6 +159,7 @@ export async function fetchWeeklyForecast(): Promise<DailyForecast[]> {
         highTemperature: high,
         lowTemperature: low,
         rainProbability: num(forecast.daily?.precipitation_probability_max, i) ?? 0,
+        uvIndexMax: num(forecast.daily?.uv_index_max, i),
       };
 
       const recommendation = evaluateRecommendation({

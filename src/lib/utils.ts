@@ -65,6 +65,43 @@ export function degreesToCompassJa(deg: number): string {
   return dirs[index] ?? "不明";
 }
 
+/** UVインデックスを「弱い/強い」などの区分と対策メッセージへ変換。 */
+export function describeUvIndex(uv: number): {
+  level: string;
+  advice: string;
+  tone: "low" | "moderate" | "high" | "veryhigh";
+} {
+  if (uv < 3) {
+    return { level: "弱い", advice: "特別な対策は不要です。", tone: "low" };
+  }
+  if (uv < 6) {
+    return {
+      level: "中程度",
+      advice: "日中は帽子や日焼け止めがあると安心です。",
+      tone: "moderate",
+    };
+  }
+  if (uv < 8) {
+    return {
+      level: "強い",
+      advice: "帽子・日焼け止め・こまめな日陰休憩を。",
+      tone: "high",
+    };
+  }
+  if (uv < 11) {
+    return {
+      level: "非常に強い",
+      advice: "長時間の浜歩きは日焼け対策を万全に。",
+      tone: "veryhigh",
+    };
+  }
+  return {
+    level: "極端に強い",
+    advice: "日中の外出は控えめに。対策を徹底してください。",
+    tone: "veryhigh",
+  };
+}
+
 /** スコア(1-5)を星文字列に変換。 */
 export function scoreToStars(score: number): string {
   const clamped = Math.max(0, Math.min(5, Math.round(score)));
