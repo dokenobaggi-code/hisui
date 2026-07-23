@@ -1,8 +1,9 @@
 /**
- * 「今日行くべき？」判定エンジン。
+ * おすすめ度判定エンジン。
  *
- * 波・風・天気・潮位・気温をそれぞれ0〜100点で採点し、
+ * 波・風・前日の海況・天気・気温をそれぞれ0〜100点で採点し、
  * 重み付き平均で総合スコア（0〜100）を算出する。
+ * （日本海は潮位差が小さいため潮位は判定に含めない）
  *
  * 設計方針:
  * - 外部I/Oを持たない純粋関数。入力が同じなら出力も同じ（テスト・再現が容易）。
@@ -21,7 +22,6 @@ import type {
   RecommendationScore,
   SafetyAlert,
   StarLevel,
-  TideInfo,
   WeatherEvaluation,
 } from "@/types/recommendation";
 import type { WaveInfo, WeatherInfo } from "@/types";
@@ -39,11 +39,10 @@ export const DANGER_WAVE_HEIGHT = 1.5;
  * 経験則にもとづく重要な指標のため、風と同等の重みを置いている。
  */
 export const FACTOR_WEIGHTS = {
-  wave: 25,
-  wind: 20,
-  previousDay: 20,
-  weather: 15,
-  tide: 12,
+  wave: 28,
+  wind: 22,
+  previousDay: 24,
+  weather: 18,
   temperature: 8,
 } as const;
 
@@ -53,7 +52,6 @@ const NEUTRAL_SCORE = 60;
 export interface EvaluateInput {
   wave: WaveInfo;
   weather: WeatherInfo;
-  tide?: TideInfo;
   /** 前日の海況（荒れた翌日は加点される） */
   previousDay?: PreviousDayInfo;
 }
@@ -104,19 +102,6 @@ function scoreWeather(weatherCode: number, rainProbability: number): number {
 
   const penalty = Math.max(0, Math.min(30, rainProbability * 0.3));
   return clamp(base - penalty);
-}
-
-/**
- * 潮位の採点。低いほど浜が広く露出し、探せる範囲が広がる。
- * 平均海面(MSL)からの高さ (m) で評価する。
- */
-function scoreTide(seaLevel: number | null): number {
-  if (seaLevel === null) return NEUTRAL_SCORE;
-  if (seaLevel <= -0.2) return 100;
-  if (seaLevel <= -0.05) return 85;
-  if (seaLevel <= 0.1) return 65;
-  if (seaLevel <= 0.25) return 45;
-  return 25;
 }
 
 /**
@@ -198,30 +183,14 @@ export function toRecommendationScore(value: number): RecommendationScore {
   return { value: rounded, stars, label, icon, tone };
 }
 
-/** 潮の動きの日本語表現。 */
-function tideTrendJa(trend: TideInfo["trend"]): string {
-  switch (trend) {
-    case "rising":
-      return "上げ潮";
-    case "falling":
-      return "下げ潮";
-    case "steady":
-      return "横ばい";
-    default:
-      return "不明";
-  }
-}
-
 // ---------- 項目別評価の組み立て ----------
 
 function buildFactors(input: EvaluateInput): WeatherEvaluation[] {
-  const { wave, weather, tide, previousDay } = input;
-  const seaLevel = tide?.seaLevel ?? null;
+  const { wave, weather, previousDay } = input;
 
   const waveScore = scoreWave(wave.waveHeight);
   const windScore = scoreWind(wave.windSpeed);
   const weatherScore = scoreWeather(weather.weatherCode, weather.rainProbability);
-  const tideScore = scoreTide(seaLevel);
   const tempScore = scoreTemperature(weather.temperature);
   const prevScore = scorePreviousDay(previousDay);
 
@@ -268,15 +237,6 @@ function buildFactors(input: EvaluateInput): WeatherEvaluation[] {
       detail: describeWeather(weather.weather, weather.rainProbability),
     },
     {
-      key: "tide",
-      label: "潮位",
-      grade: toGrade(tideScore),
-      score: tideScore,
-      weight: FACTOR_WEIGHTS.tide,
-      value: seaLevel === null ? "—" : `${seaLevel.toFixed(2)} m`,
-      detail: describeTide(seaLevel, tide?.trend ?? "unknown"),
-    },
-    {
       key: "temperature",
       label: "気温",
       grade: toGrade(tempScore),
@@ -312,14 +272,6 @@ function describeWeather(weather: string, rainProbability: number): string {
   if (rainProbability >= 70) return `${weather}・${rain}。雨で視界が悪く、石の判別がしにくい状況です。`;
   if (rainProbability >= 40) return `${weather}・${rain}。雨具の準備をしておくと安心です。`;
   return `${weather}・${rain}。視界がよく石を見分けやすい天気です。`;
-}
-
-function describeTide(seaLevel: number | null, trend: TideInfo["trend"]): string {
-  if (seaLevel === null) return "潮位データを取得できませんでした。中立として評価しています。";
-  const base = `潮位${seaLevel.toFixed(2)}m（${tideTrendJa(trend)}）`;
-  if (seaLevel <= -0.05) return `${base}。潮が引いて浜が広く、探せる範囲が広がっています。`;
-  if (seaLevel <= 0.1) return `${base}。標準的な潮位です。`;
-  return `${base}。潮が高く、歩ける浜が狭くなっています。干潮の時間帯を狙うと有利です。`;
 }
 
 function describeTemperature(temperature: number): string {

@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Backpack, ArrowRight } from "lucide-react";
 import { JadePair } from "@/components/JadeIllustration";
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { WaveCard } from "@/components/WaveCard";
@@ -5,7 +7,7 @@ import { WeatherCard } from "@/components/WeatherCard";
 import { WeeklyForecast } from "@/components/WeeklyForecast";
 import { PastWaves } from "@/components/PastWaves";
 import { AppraisalSchedule } from "@/components/AppraisalSchedule";
-import { ScoreChart } from "@/components/ScoreChart";
+import { SectionHeading } from "@/components/SectionHeading";
 import { TipCard } from "@/components/TipCard";
 import { RefreshButton } from "@/components/RefreshButton";
 import { getHomeData } from "@/services/home";
@@ -17,7 +19,7 @@ import { location } from "@/lib/config";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const { record, trend, source, recommendation, weekly, pastWaves } = await getHomeData();
+  const { record, source, recommendation, weekly, pastWaves } = await getHomeData();
   const tip = getTipOfDay(record.date);
   const today = todayIsoInJst(location.timezone);
 
@@ -28,8 +30,8 @@ export default async function HomePage() {
         <div className="flex items-center gap-4">
           <JadePair className="h-16 w-24 shrink-0" />
           <div className="space-y-1.5">
-            <span className="label-en">Hisui Beach · Toyama</span>
-            <h1 className="jade-text text-3xl font-bold sm:text-4xl">ヒスイ拾い予報</h1>
+            <span className="label-en font-hand block">Hisui Beach · Toyama</span>
+            <h1 className="jade-text font-round text-3xl font-bold sm:text-4xl">ヒスイ拾いナビ</h1>
             <p className="text-xs tracking-wider text-muted-foreground">{location.name}</p>
           </div>
         </div>
@@ -39,45 +41,48 @@ export default async function HomePage() {
       <RecommendationCard recommendation={recommendation} />
 
       <section className="space-y-5">
-        <div className="rule-left space-y-1">
-          <span className="label-en">Conditions</span>
-          <h2 className="text-lg font-bold">今日の海と空</h2>
-        </div>
+        <SectionHeading en="Conditions">今日の海と空</SectionHeading>
         <div className="grid gap-5 sm:grid-cols-2">
           <WaveCard wave={record.wave} />
           <WeatherCard weather={record.weather} />
         </div>
       </section>
 
-      <WeeklyForecast days={weekly} />
+      <section className="space-y-5">
+        <SectionHeading en="This week">週間おすすめ度</SectionHeading>
+        <WeeklyForecast days={weekly} />
+      </section>
 
       <section className="space-y-5">
-        <div className="rule-left space-y-1">
-          <span className="label-en">Past week</span>
-          <h2 className="text-lg font-bold">ヒスイの拡散ぐあい</h2>
-        </div>
+        <SectionHeading en="Past week">ヒスイの拡散ぐあい</SectionHeading>
         <PastWaves summary={pastWaves} />
       </section>
 
       <section className="space-y-5">
-        <div className="rule-left space-y-1">
-          <span className="label-en">Stone appraisal</span>
-          <h2 className="text-lg font-bold">拾った石を鑑定してもらう</h2>
-        </div>
+        <SectionHeading en="Stone appraisal">拾った石を鑑定してもらう</SectionHeading>
         <AppraisalSchedule todayIso={today} />
       </section>
 
-      <section className="space-y-5">
-        <div className="rule-left space-y-1">
-          <span className="label-en">Records</span>
-          <h2 className="text-lg font-bold">これまでの推移</h2>
-        </div>
-        <ScoreChart data={trend} />
-      </section>
+      {/* 服装・持ち物への誘導 */}
+      <Link
+        href="/packing"
+        className="lift flex items-center gap-4 rounded-2xl border border-primary/25 bg-accent/50 p-5 transition-colors hover:bg-accent"
+      >
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+          <Backpack className="h-5 w-5" />
+        </span>
+        <span className="flex-1">
+          <span className="block font-round font-bold">服装・持ち物をチェック</span>
+          <span className="block text-xs text-muted-foreground">
+            夏・冬の服装、あると便利な道具はこちら
+          </span>
+        </span>
+        <ArrowRight className="h-5 w-5 shrink-0 text-primary" />
+      </Link>
 
       <TipCard tip={tip} />
 
-      <p className="border-t border-border/70 pt-6 text-right text-[11px] tracking-wider text-muted-foreground">
+      <p className="border-t border-border/60 pt-6 text-right text-[11px] tracking-wider text-muted-foreground">
         最終更新 {formatJaDateTime(record.createdAt, location.timezone)}
         {source === "live" && "（リアルタイム計算・未保存）"}
       </p>

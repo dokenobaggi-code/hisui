@@ -89,8 +89,13 @@
   * {
     @apply border-border;
   }
+  /* 背景の風景シーンを見せるため、色はhtmlに置きbodyは透明にする */
+  html {
+    @apply bg-background;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: transparent;
     font-feature-settings:
       "rlig" 1,
       "calt" 1,
@@ -101,8 +106,10 @@
   h1,
   h2,
   h3 {
-    letter-spacing: 0.04em;
-    line-height: 1.55;
+    font-family: var(--font-zen-maru), var(--font-noto-sans-jp), sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.5;
   }
 }
 
@@ -133,11 +140,17 @@
   background-color: hsl(140 16% 16%);
 }
 
-/** 数字は明朝で組み、他とちがう表情を出す */
+/** 数字は丸ゴシックで、ぽってり親しみのある表情に */
 .numeral {
-  font-family: var(--font-noto-serif-jp), serif;
+  font-family: var(--font-zen-maru), var(--font-noto-sans-jp), sans-serif;
+  font-weight: 900;
   font-feature-settings: "palt" 0;
   letter-spacing: 0;
+}
+
+/** 手書き風フォント（ワンポイント用） */
+.font-hand {
+  font-family: var(--font-yusei), var(--font-zen-maru), sans-serif;
 }
 
 /** 見出しは単色の葉緑。グラデーションを避けてフラットに */
@@ -146,6 +159,40 @@
 }
 .dark .jade-text {
   color: hsl(140 42% 62%);
+}
+
+/**
+ * 手書き風のゆらっとした下線。見出しの下に敷いて手作り感を出す。
+ * SVGの波線を背景に敷いている。
+ */
+.wavy-underline {
+  position: relative;
+  display: inline-block;
+}
+.wavy-underline::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: -8px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='6' viewBox='0 0 40 6'%3E%3Cpath d='M0 3 Q5 0 10 3 T20 3 T30 3 T40 3' fill='none' stroke='%2358a06f' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 40px 6px;
+}
+
+/** 破線の枠。工作・スクラップブック風の囲み。 */
+.dashed-frame {
+  border: 2px dashed hsl(var(--primary) / 0.4);
+  border-radius: 1.1rem;
+}
+
+/** ちょっとだけ傾けたシール風。装飾のワンポイントに。 */
+.sticker {
+  transform: rotate(-3deg);
+}
+.sticker-r {
+  transform: rotate(2.5deg);
 }
 
 /** ふわりと浮くカード */

@@ -14,7 +14,8 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-noto-sans-jp)", "system-ui", "sans-serif"],
-        serif: ["var(--font-noto-serif-jp)", "Georgia", "serif"],
+        round: ["var(--font-zen-maru)", "var(--font-noto-sans-jp)", "sans-serif"],
+        hand: ["var(--font-yusei)", "var(--font-zen-maru)", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

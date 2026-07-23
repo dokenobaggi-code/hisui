@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Bed, MapPin, UtensilsCrossed } from "lucide-react";
+import { Bed, KeyRound, MapPin, UtensilsCrossed } from "lucide-react";
 import { NearbySpotCard } from "@/components/NearbySpotCard";
 import { VacancyList } from "@/components/VacancyList";
+import { CoinLockers } from "@/components/CoinLockers";
 import { ACCOMMODATIONS, INFO_SPOTS, RESTAURANTS } from "@/lib/nearby";
 import { searchVacancies, tonightParams } from "@/services/rakutenTravel";
 import { todayIsoInJst } from "@/lib/utils";
 import { location } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "周辺の宿・ごはん",
+  title: "周辺情報",
   description:
-    "ヒスイ海岸（富山県朝日町 宮崎・境海岸）周辺の宿泊施設と飲食店。公共交通機関でのアクセス、公式・予約サイト、食べログへのリンクをまとめています。",
+    "ヒスイ海岸（富山県朝日町 宮崎・境海岸）周辺の宿泊施設・飲食店・コインロッカー。公共交通機関でのアクセス、公式・予約サイト、食べログへのリンクをまとめています。",
 };
 
 // 空室状況は変動するため動的レンダリング。
@@ -20,6 +21,7 @@ export const dynamic = "force-dynamic";
 const SECTIONS = [
   { id: "stay", label: "泊まる", icon: Bed },
   { id: "eat", label: "ごはん", icon: UtensilsCrossed },
+  { id: "locker", label: "ロッカー", icon: KeyRound },
   { id: "info", label: "立ち寄る", icon: MapPin },
 ] as const;
 
@@ -29,14 +31,14 @@ export default async function NearbyPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-10">
-      <div className="space-y-2 border-b border-border/70 pb-8">
-        <span className="label-en">Stay &amp; Dine</span>
+      <div className="space-y-2 border-b border-border/60 pb-8">
+        <span className="label-en font-hand block">Around Hisui Beach</span>
         <h1 className="flex items-center gap-2.5 text-2xl">
-          <MapPin className="h-5 w-5 text-primary" />
-          周辺の宿・ごはん
+          <MapPin className="h-6 w-6 text-primary" />
+          周辺情報
         </h1>
         <p className="text-xs tracking-wider text-muted-foreground">
-          ヒスイ海岸（富山県朝日町 宮崎・境海岸）周辺の宿泊施設と食事処です。
+          ヒスイ海岸（富山県朝日町 宮崎・境海岸）周辺の宿・ごはん・コインロッカーです。
         </p>
       </div>
 
@@ -101,6 +103,14 @@ export default async function NearbyPage() {
             <NearbySpotCard key={spot.id} spot={spot} />
           ))}
         </div>
+      </section>
+
+      <section id="locker" className="scroll-mt-32 space-y-4">
+        <h2 className="flex items-center gap-2 text-lg font-bold">
+          <KeyRound className="h-5 w-5 text-primary" />
+          コインロッカー
+        </h2>
+        <CoinLockers />
       </section>
 
       <section id="info" className="scroll-mt-32 space-y-4">

@@ -54,12 +54,7 @@ export function WeeklyForecast({ days }: { days: DailyForecast[] }) {
   );
 
   return (
-    <section className="space-y-5">
-      <div className="rule-left space-y-1">
-        <span className="label-en">This week</span>
-        <h2 className="text-lg font-bold">週間おすすめ度</h2>
-      </div>
-
+    <div className="space-y-4">
       <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_4px_16px_-10px_hsl(130_30%_28%/0.22)]">
         <ul>
           {days.map((day, index) => {
@@ -127,9 +122,9 @@ export function WeeklyForecast({ days }: { days: DailyForecast[] }) {
       </div>
 
       <p className="text-xs leading-relaxed text-muted-foreground">
-        日別予報のため、潮位は加味していません（当日の判定とは数点前後することがあります）。
+        日別予報のため、当日の詳しい判定とは数点前後することがあります。
         波が高い日は安全を最優先にしてください。
       </p>
-    </section>
+    </div>
   );
 }

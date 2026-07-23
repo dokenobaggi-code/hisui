@@ -1,4 +1,4 @@
-import { CalendarClock, CloudSun, Thermometer, Waves, Wind, Moon } from "lucide-react";
+import { CalendarClock, CloudSun, Thermometer, Waves, Wind } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { FactorKey, Grade, WeatherEvaluation } from "@/types/recommendation";
 
@@ -16,7 +16,6 @@ const FACTOR_ICON: Record<FactorKey, typeof Waves> = {
   wind: Wind,
   previousDay: CalendarClock,
   weather: CloudSun,
-  tide: Moon,
   temperature: Thermometer,
 };
 

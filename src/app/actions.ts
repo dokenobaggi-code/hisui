@@ -12,7 +12,6 @@ export async function refreshTodayAction(): Promise<{ ok: boolean; message: stri
   try {
     const record = await runDailyPipeline();
     revalidatePath("/");
-    revalidatePath("/history");
     return {
       ok: true,
       message: `更新しました（${record.date}・おすすめ度 ${record.judgement.score}/5）`,

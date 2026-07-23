@@ -41,7 +41,6 @@ async function handle(request: NextRequest) {
   try {
     const record = await runDailyPipeline();
     revalidatePath("/");
-    revalidatePath("/history");
 
     return NextResponse.json({
       ok: true,
